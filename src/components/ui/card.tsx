@@ -26,6 +26,7 @@ function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 function CardTitle({ className, ...props }: React.ComponentProps<"h3">) {
+  // eslint-disable-next-line jsx-a11y/heading-has-content -- content is passed via props spread
   return <h3 data-slot="card-title" className={cn("leading-none font-semibold", className)} {...props} />;
 }
 

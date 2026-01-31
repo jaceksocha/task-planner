@@ -212,7 +212,7 @@ export function TaskList() {
           )}
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
           <CategoryDialog categories={categories} onCategoriesChange={fetchCategories} />
           <Button onClick={() => setDialogOpen(true)}>
             <Plus className="mr-2 h-4 w-4" />
