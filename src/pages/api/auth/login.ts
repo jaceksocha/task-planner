@@ -46,6 +46,24 @@ export async function POST(context: APIContext): Promise<Response> {
     return new Response(JSON.stringify(apiError), { status: 401 });
   }
 
+  // Set session using Supabase's setSession which will trigger setAll callback
+  if (data.session) {
+    // Call setSession to let Supabase SSR handle cookie setting through our setAll callback
+    await supabase.auth.setSession(data.session);
+
+    return new Response(
+      JSON.stringify({
+        data: {
+          user: data.user,
+        },
+      }),
+      {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  }
+
   return new Response(
     JSON.stringify({
       data: {
