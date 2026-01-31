@@ -6,14 +6,12 @@ export const prerender = false;
 
 // GET /api/categories/:id - Get single category
 export async function GET(context: APIContext): Promise<Response> {
-  const { supabase } = context.locals;
+  const { supabase, user } = context.locals;
   const { id } = context.params;
 
-  const userId = context.request.headers.get("x-user-id");
-
-  if (!userId) {
+  if (!user) {
     const error: ApiError = {
-      error: { message: "User ID required (x-user-id header)", code: "UNAUTHORIZED" },
+      error: { message: "Authentication required", code: "UNAUTHORIZED" },
     };
     return new Response(JSON.stringify(error), { status: 401 });
   }
@@ -25,7 +23,7 @@ export async function GET(context: APIContext): Promise<Response> {
     return new Response(JSON.stringify(error), { status: 400 });
   }
 
-  const { data, error } = await supabase.from("categories").select("*").eq("id", id).eq("user_id", userId).single();
+  const { data, error } = await supabase.from("categories").select("*").eq("id", id).eq("user_id", user.id).single();
 
   if (error || !data) {
     const apiError: ApiError = {
@@ -43,14 +41,12 @@ export async function GET(context: APIContext): Promise<Response> {
 
 // PUT /api/categories/:id - Update category
 export async function PUT(context: APIContext): Promise<Response> {
-  const { supabase } = context.locals;
+  const { supabase, user } = context.locals;
   const { id } = context.params;
 
-  const userId = context.request.headers.get("x-user-id");
-
-  if (!userId) {
+  if (!user) {
     const error: ApiError = {
-      error: { message: "User ID required (x-user-id header)", code: "UNAUTHORIZED" },
+      error: { message: "Authentication required", code: "UNAUTHORIZED" },
     };
     return new Response(JSON.stringify(error), { status: 401 });
   }
@@ -89,7 +85,7 @@ export async function PUT(context: APIContext): Promise<Response> {
     .from("categories")
     .update(updateData)
     .eq("id", id)
-    .eq("user_id", userId)
+    .eq("user_id", user.id)
     .select()
     .single();
 
@@ -124,14 +120,12 @@ export async function PUT(context: APIContext): Promise<Response> {
 
 // DELETE /api/categories/:id - Delete category
 export async function DELETE(context: APIContext): Promise<Response> {
-  const { supabase } = context.locals;
+  const { supabase, user } = context.locals;
   const { id } = context.params;
 
-  const userId = context.request.headers.get("x-user-id");
-
-  if (!userId) {
+  if (!user) {
     const error: ApiError = {
-      error: { message: "User ID required (x-user-id header)", code: "UNAUTHORIZED" },
+      error: { message: "Authentication required", code: "UNAUTHORIZED" },
     };
     return new Response(JSON.stringify(error), { status: 401 });
   }
@@ -143,7 +137,7 @@ export async function DELETE(context: APIContext): Promise<Response> {
     return new Response(JSON.stringify(error), { status: 400 });
   }
 
-  const { error } = await supabase.from("categories").delete().eq("id", id).eq("user_id", userId);
+  const { error } = await supabase.from("categories").delete().eq("id", id).eq("user_id", user.id);
 
   if (error) {
     const apiError: ApiError = {

@@ -22,7 +22,6 @@ interface TaskDialogProps {
   categories: CategoryDTO[];
   onSave: (data: CreateTaskCommand | UpdateTaskCommand) => void;
   isLoading?: boolean;
-  userId: string;
 }
 
 interface AISuggestion {
@@ -30,7 +29,7 @@ interface AISuggestion {
   type: string;
 }
 
-export function TaskDialog({ open, onOpenChange, task, categories, onSave, isLoading, userId }: TaskDialogProps) {
+export function TaskDialog({ open, onOpenChange, task, categories, onSave, isLoading }: TaskDialogProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState<"todo" | "in_progress" | "done">("todo");
@@ -92,7 +91,6 @@ export function TaskDialog({ open, onOpenChange, task, categories, onSave, isLoa
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-user-id": userId,
         },
         body: JSON.stringify({
           type,

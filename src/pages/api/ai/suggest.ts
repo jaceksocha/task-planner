@@ -20,11 +20,11 @@ interface SuggestResponse {
 }
 
 export async function POST(context: APIContext): Promise<Response> {
-  const userId = context.request.headers.get("x-user-id");
+  const { user } = context.locals;
 
-  if (!userId) {
+  if (!user) {
     const error: ApiError = {
-      error: { message: "User ID required (x-user-id header)", code: "UNAUTHORIZED" },
+      error: { message: "Authentication required", code: "UNAUTHORIZED" },
     };
     return new Response(JSON.stringify(error), { status: 401 });
   }

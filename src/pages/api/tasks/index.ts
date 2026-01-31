@@ -6,15 +6,11 @@ export const prerender = false;
 
 // GET /api/tasks - List tasks
 export async function GET(context: APIContext): Promise<Response> {
-  const { supabase } = context.locals;
+  const { supabase, user } = context.locals;
 
-  // For now, use a test user ID (in production, get from auth)
-  // TODO: Replace with actual auth when Supabase Auth is implemented
-  const userId = context.request.headers.get("x-user-id");
-
-  if (!userId) {
+  if (!user) {
     const error: ApiError = {
-      error: { message: "User ID required (x-user-id header)", code: "UNAUTHORIZED" },
+      error: { message: "Authentication required", code: "UNAUTHORIZED" },
     };
     return new Response(JSON.stringify(error), { status: 401 });
   }
@@ -39,7 +35,7 @@ export async function GET(context: APIContext): Promise<Response> {
   const query = queryResult.data;
 
   // Build query
-  let dbQuery = supabase.from("tasks").select("*").eq("user_id", userId);
+  let dbQuery = supabase.from("tasks").select("*").eq("user_id", user.id);
 
   if (query.status) {
     dbQuery = dbQuery.eq("status", query.status);
@@ -74,13 +70,11 @@ export async function GET(context: APIContext): Promise<Response> {
 
 // POST /api/tasks - Create task
 export async function POST(context: APIContext): Promise<Response> {
-  const { supabase } = context.locals;
+  const { supabase, user } = context.locals;
 
-  const userId = context.request.headers.get("x-user-id");
-
-  if (!userId) {
+  if (!user) {
     const error: ApiError = {
-      error: { message: "User ID required (x-user-id header)", code: "UNAUTHORIZED" },
+      error: { message: "Authentication required", code: "UNAUTHORIZED" },
     };
     return new Response(JSON.stringify(error), { status: 401 });
   }
@@ -112,7 +106,7 @@ export async function POST(context: APIContext): Promise<Response> {
     .from("tasks")
     .insert({
       ...taskData,
-      user_id: userId,
+      user_id: user.id,
     })
     .select()
     .single();

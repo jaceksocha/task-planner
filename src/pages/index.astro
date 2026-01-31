@@ -1,21 +1,25 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { TaskList } from "../components/TaskList";
+import { UserMenu } from "../components/UserMenu";
+import { WeeklySummary } from "../components/WeeklySummary";
 
-// For now, use a hardcoded test user ID (same as in API tests)
-// TODO: Replace with actual auth when Supabase Auth is implemented
-const userId = "550e8400-e29b-41d4-a716-446655440000";
+const user = Astro.locals.user;
 ---
 
 <Layout title="Task Planner">
   <div class="container mx-auto max-w-4xl px-4 py-8">
-    <header class="mb-8">
-      <h1 class="text-3xl font-bold tracking-tight">Task Planner</h1>
-      <p class="text-muted-foreground">Manage your tasks efficiently</p>
+    <header class="mb-8 flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold tracking-tight">Task Planner</h1>
+        <p class="text-muted-foreground">Manage your tasks efficiently</p>
+      </div>
+      {user && <UserMenu client:load email={user.email || "User"} />}
     </header>
 
-    <main>
-      <TaskList client:load userId={userId} />
+    <main class="space-y-8">
+      <WeeklySummary client:load />
+      <TaskList client:load />
     </main>
   </div>
 </Layout>

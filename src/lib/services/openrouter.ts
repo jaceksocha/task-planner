@@ -141,6 +141,49 @@ export class OpenRouterService {
 
     return this.chat(messages, { temperature: 0.5, maxTokens: 200 });
   }
+
+  async summarizeWeeklyTasks(
+    tasks: Array<{
+      title: string;
+      description: string | null;
+      priority: string;
+      completed_at: string;
+      category?: string;
+    }>
+  ): Promise<string> {
+    // Build context from tasks
+    const tasksSummary = tasks
+      .map((task, index) => {
+        const parts = [
+          `${index + 1}. ${task.title}`,
+          task.description ? `   Description: ${task.description}` : null,
+          `   Priority: ${task.priority}`,
+          task.category ? `   Category: ${task.category}` : null,
+          `   Completed: ${new Date(task.completed_at).toLocaleDateString()}`,
+        ];
+        return parts.filter(Boolean).join("\n");
+      })
+      .join("\n\n");
+
+    const messages: ChatMessage[] = [
+      {
+        role: "system",
+        content: `You are a helpful assistant that analyzes completed tasks and provides insightful weekly summaries. Create a concise summary (3-4 paragraphs) that:
+1. Highlights key accomplishments
+2. Identifies patterns or themes in the work
+3. Notes productivity trends (high priority items, categories focused on)
+4. Provides brief encouragement or actionable insights
+
+Be specific, positive, and actionable. Format in markdown.`,
+      },
+      {
+        role: "user",
+        content: `Here are my completed tasks from the past 7 days:\n\n${tasksSummary}\n\nProvide a weekly summary.`,
+      },
+    ];
+
+    return this.chat(messages, { temperature: 0.7, maxTokens: 500 });
+  }
 }
 
 export function createOpenRouterService(): OpenRouterService | null {

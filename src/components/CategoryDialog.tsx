@@ -15,7 +15,6 @@ import type { CategoryDTO, CreateCategoryCommand } from "../types";
 import { Settings, Plus, Pencil, Trash2 } from "lucide-react";
 
 interface CategoryDialogProps {
-  userId: string;
   categories: CategoryDTO[];
   onCategoriesChange: () => void;
 }
@@ -31,7 +30,7 @@ const colorOptions = [
   "#6b7280", // gray
 ];
 
-export function CategoryDialog({ userId, categories, onCategoriesChange }: CategoryDialogProps) {
+export function CategoryDialog({ categories, onCategoriesChange }: CategoryDialogProps) {
   const [open, setOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<CategoryDTO | null>(null);
   const [name, setName] = useState("");
@@ -69,7 +68,6 @@ export function CategoryDialog({ userId, categories, onCategoriesChange }: Categ
         method,
         headers: {
           "Content-Type": "application/json",
-          "x-user-id": userId,
         },
         body: JSON.stringify(data),
       });
@@ -96,7 +94,6 @@ export function CategoryDialog({ userId, categories, onCategoriesChange }: Categ
     try {
       const response = await fetch(`/api/categories/${category.id}`, {
         method: "DELETE",
-        headers: { "x-user-id": userId },
       });
 
       if (!response.ok) {

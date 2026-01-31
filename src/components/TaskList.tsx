@@ -7,11 +7,7 @@ import { CategoryDialog } from "./CategoryDialog";
 import type { TaskDTO, CategoryDTO, CreateTaskCommand, UpdateTaskCommand, ApiResponse } from "../types";
 import { Plus, ListTodo } from "lucide-react";
 
-interface TaskListProps {
-  userId: string;
-}
-
-export function TaskList({ userId }: TaskListProps) {
+export function TaskList() {
   const [tasks, setTasks] = useState<TaskDTO[]>([]);
   const [categories, setCategories] = useState<CategoryDTO[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -32,9 +28,7 @@ export function TaskList({ userId }: TaskListProps) {
       if (priorityFilter !== "all") params.set("priority", priorityFilter);
       if (categoryFilter !== "all") params.set("category_id", categoryFilter);
 
-      const response = await fetch(`/api/tasks?${params}`, {
-        headers: { "x-user-id": userId },
-      });
+      const response = await fetch(`/api/tasks?${params}`);
       const result: ApiResponse<TaskDTO[]> = await response.json();
 
       if ("error" in result) {
@@ -45,13 +39,11 @@ export function TaskList({ userId }: TaskListProps) {
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to fetch tasks");
     }
-  }, [userId, statusFilter, priorityFilter, categoryFilter]);
+  }, [statusFilter, priorityFilter, categoryFilter]);
 
   const fetchCategories = useCallback(async () => {
     try {
-      const response = await fetch("/api/categories", {
-        headers: { "x-user-id": userId },
-      });
+      const response = await fetch("/api/categories");
       const result: ApiResponse<CategoryDTO[]> = await response.json();
 
       if ("error" in result) {
@@ -62,7 +54,7 @@ export function TaskList({ userId }: TaskListProps) {
     } catch {
       // Silently fail for categories - not critical
     }
-  }, [userId]);
+  }, []);
 
   useEffect(() => {
     const loadData = async () => {
@@ -80,7 +72,6 @@ export function TaskList({ userId }: TaskListProps) {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          "x-user-id": userId,
         },
         body: JSON.stringify({ status: newStatus }),
       });
@@ -106,7 +97,6 @@ export function TaskList({ userId }: TaskListProps) {
     try {
       const response = await fetch(`/api/tasks/${task.id}`, {
         method: "DELETE",
-        headers: { "x-user-id": userId },
       });
 
       if (!response.ok) {
@@ -129,7 +119,6 @@ export function TaskList({ userId }: TaskListProps) {
         method,
         headers: {
           "Content-Type": "application/json",
-          "x-user-id": userId,
         },
         body: JSON.stringify(data),
       });
@@ -224,7 +213,7 @@ export function TaskList({ userId }: TaskListProps) {
         </div>
 
         <div className="flex gap-2">
-          <CategoryDialog userId={userId} categories={categories} onCategoriesChange={fetchCategories} />
+          <CategoryDialog categories={categories} onCategoriesChange={fetchCategories} />
           <Button onClick={() => setDialogOpen(true)}>
             <Plus className="mr-2 h-4 w-4" />
             Add Task
@@ -264,7 +253,6 @@ export function TaskList({ userId }: TaskListProps) {
         categories={categories}
         onSave={handleSave}
         isLoading={isSaving}
-        userId={userId}
       />
     </div>
   );

@@ -6,13 +6,11 @@ export const prerender = false;
 
 // GET /api/categories - List categories
 export async function GET(context: APIContext): Promise<Response> {
-  const { supabase } = context.locals;
+  const { supabase, user } = context.locals;
 
-  const userId = context.request.headers.get("x-user-id");
-
-  if (!userId) {
+  if (!user) {
     const error: ApiError = {
-      error: { message: "User ID required (x-user-id header)", code: "UNAUTHORIZED" },
+      error: { message: "Authentication required", code: "UNAUTHORIZED" },
     };
     return new Response(JSON.stringify(error), { status: 401 });
   }
@@ -20,7 +18,7 @@ export async function GET(context: APIContext): Promise<Response> {
   const { data, error } = await supabase
     .from("categories")
     .select("*")
-    .eq("user_id", userId)
+    .eq("user_id", user.id)
     .order("name", { ascending: true });
 
   if (error) {
@@ -39,13 +37,11 @@ export async function GET(context: APIContext): Promise<Response> {
 
 // POST /api/categories - Create category
 export async function POST(context: APIContext): Promise<Response> {
-  const { supabase } = context.locals;
+  const { supabase, user } = context.locals;
 
-  const userId = context.request.headers.get("x-user-id");
-
-  if (!userId) {
+  if (!user) {
     const error: ApiError = {
-      error: { message: "User ID required (x-user-id header)", code: "UNAUTHORIZED" },
+      error: { message: "Authentication required", code: "UNAUTHORIZED" },
     };
     return new Response(JSON.stringify(error), { status: 401 });
   }
@@ -77,7 +73,7 @@ export async function POST(context: APIContext): Promise<Response> {
     .from("categories")
     .insert({
       ...categoryData,
-      user_id: userId,
+      user_id: user.id,
     })
     .select()
     .single();
