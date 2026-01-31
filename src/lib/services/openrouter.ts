@@ -143,13 +143,13 @@ export class OpenRouterService {
   }
 
   async summarizeWeeklyTasks(
-    tasks: Array<{
+    tasks: {
       title: string;
       description: string | null;
       priority: string;
       completed_at: string;
       category?: string;
-    }>
+    }[]
   ): Promise<string> {
     // Build context from tasks
     const tasksSummary = tasks

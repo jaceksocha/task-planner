@@ -114,9 +114,7 @@ export function ResetPasswordForm() {
                 />
               </div>
 
-              <p className="text-xs text-muted-foreground">
-                Password must be at least 6 characters long
-              </p>
+              <p className="text-xs text-muted-foreground">Password must be at least 6 characters long</p>
             </>
           )}
         </CardContent>
@@ -135,7 +133,7 @@ export function ResetPasswordForm() {
         )}
         {!hasToken && (
           <CardFooter>
-            <Button type="button" className="w-full" onClick={() => window.location.href = "/forgot-password"}>
+            <Button type="button" className="w-full" onClick={() => (window.location.href = "/forgot-password")}>
               Request New Reset Link
             </Button>
           </CardFooter>

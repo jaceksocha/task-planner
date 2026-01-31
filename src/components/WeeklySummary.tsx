@@ -89,7 +89,7 @@ export function WeeklySummary() {
         {!data && !isLoading && !error && (
           <div className="text-center py-8 text-muted-foreground">
             <TrendingUp className="h-12 w-12 mx-auto mb-3 opacity-50" />
-            <p>Click "Generate Summary" to see your weekly insights</p>
+            <p>Click &quot;Generate Summary&quot; to see your weekly insights</p>
           </div>
         )}
 
@@ -105,7 +105,10 @@ export function WeeklySummary() {
               </div>
             </div>
 
-            <div className="prose prose-sm max-w-none dark:prose-invert" dangerouslySetInnerHTML={{ __html: markdownToHtml(data.summary) }} />
+            <div
+              className="prose prose-sm max-w-none dark:prose-invert"
+              dangerouslySetInnerHTML={{ __html: markdownToHtml(data.summary) }}
+            />
           </div>
         )}
       </CardContent>

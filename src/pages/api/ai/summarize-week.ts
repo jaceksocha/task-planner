@@ -85,13 +85,21 @@ export async function GET(context: APIContext): Promise<Response> {
     }
 
     // Transform tasks for AI (handle the join result)
-    const tasksForAI = tasks.map((task: any) => ({
-      title: task.title,
-      description: task.description,
-      priority: task.priority,
-      completed_at: task.completed_at,
-      category: task.categories?.name || undefined,
-    }));
+    const tasksForAI = tasks.map(
+      (task: {
+        title: string;
+        description: string | null;
+        priority: string;
+        completed_at: string;
+        categories: { name: string } | null;
+      }) => ({
+        title: task.title,
+        description: task.description,
+        priority: task.priority,
+        completed_at: task.completed_at,
+        category: task.categories?.name || undefined,
+      })
+    );
 
     // Generate summary
     const summary = await openRouter.summarizeWeeklyTasks(tasksForAI);
